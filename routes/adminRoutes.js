@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 import Author from "../models/Author.js";
 import Book from "../models/Book.js";
 import User from "../models/User.js";
