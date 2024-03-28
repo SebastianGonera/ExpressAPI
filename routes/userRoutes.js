@@ -14,7 +14,7 @@ userRoute.get('/favorite_books/:userId', verifyToken, async (req, res) => {
         const id = req.params.userId;
         const userBooks = await User.findOne({ '_id': id }, 'favoriteBooks');
         if (!userBooks) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const books = [];
@@ -37,7 +37,7 @@ userRoute.get('/favorite_authors/:userId', verifyToken, async (req, res) => {
         const user = await User.findOne({ '_id': id }, 'favoriteAuthors');
 
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const authors = [];
@@ -83,7 +83,7 @@ userRoute.post('/signin', async (req, res) => {
         const user = await User.findOne({ 'email': req.body.email });
 
         if (!user) {
-            return res.status(400).json({ message: "Not found user with this email" });
+            return res.status(404).json({ message: "Not found user with this email" });
         }
         else {
             const pass = req.body.password;
@@ -111,11 +111,11 @@ userRoute.put('/add_favorite_book/:bookId', verifyToken, async (req, res) => {
         const user = await User.findById(userId);
 
         if (!book) {
-            return res.status(400).json({ message: "Book with this id not found" });
+            return res.status(404).json({ message: "Book with this id not found" });
         }
 
         if (!user) {
-            return res.status(400).json({ message: "User with this id not found" });
+            return res.status(404).json({ message: "User with this id not found" });
         }
 
         user.favoriteBooks.push(bookId);
@@ -136,11 +136,11 @@ userRoute.put('/add_favorite_author/:authorId', verifyToken, async (req, res) =>
         const user = await User.findById(userId);
 
         if (!author) {
-            return res.status(400).json({ message: "Author with this id not found" });
+            return res.status(404).json({ message: "Author with this id not found" });
         }
 
         if (!user) {
-            return res.status(400).json({ message: "User with this id not found" });
+            return res.status(404).json({ message: "User with this id not found" });
         }
 
         user.favoriteAuthors.push(authorId);
@@ -158,7 +158,7 @@ userRoute.put('/update/:userId', verifyToken, async (req, res) => {
         const user = await User.findById(id);
 
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         user.username = req.body.username || user.username;
@@ -178,7 +178,7 @@ userRoute.put("/change_password/:id", verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return  res.status(400).json({ message: "User not found" });
+            return  res.status(404).json({ message: "User not found" });
         }
         if(req.body.password && req.body.confirmPass
             && req.body.password == req.body.confirmPass){
@@ -208,11 +208,11 @@ userRoute.delete('/remove_favorite_book/:bookId', verifyToken, async (req, res) 
         const user = await User.findById(userId);
 
         if (!book) {
-            return res.status(400).json({ message: "Book with this id not found" });
+            return res.status(404).json({ message: "Book with this id not found" });
         }
 
         if (!user) {
-            return res.status(400).json({ message: "User with this id not found" });
+            return res.status(404).json({ message: "User with this id not found" });
         }
 
         user.favoriteBooks = user.favoriteBooks.filter(id => id != bookId);
@@ -234,11 +234,11 @@ userRoute.delete('/remove_favorite_author/:authorId', verifyToken, async (req, r
         const user = await User.findById(userId);
 
         if (!author) {
-            return res.status(400).json({ message: "Author with this id not found" });
+            return res.status(404).json({ message: "Author with this id not found" });
         }
 
         if (!user) {
-            return res.status(400).json({ message: "User with this id not found" });
+            return res.status(404).json({ message: "User with this id not found" });
         }
 
         user.favoriteAuthors = user.favoriteAuthors.filter(id => id != authorId);
@@ -255,7 +255,7 @@ userRoute.delete('/delete/:userId', verifyToken, async (req, res) => {
         const id = req.params.userId;
         const user = await User.findByIdAndDelete(id);
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         res.status(200).json({ message: "User successfully deleted" });

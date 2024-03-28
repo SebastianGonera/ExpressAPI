@@ -30,6 +30,10 @@ bookRoute.get('/:id', async (req, res) => {
 
 bookRoute.post('/add', verifyToken, async (req, res) => {
     try {
+        const isbn = await Book.findOne({'isbn': req.body.isbn});
+        if(isbn){
+            return res.status(404).json({message : "Book with this isbn exists in database"});
+        }
         const newBook = new Book({
             title: req.body.title,
             isbn: req.body.isbn,
@@ -58,6 +62,9 @@ bookRoute.put('/update/:id', verifyToken, async (req, res) => {
             return res.status(400).json({ message: "Invalid id_ for this book" });
         }
         const book = await Book.findById(id);
+        if(!book){
+            return res.status(404).json({message: "Book not found"});
+        }
         book.title = req.body.title || book.title;
         book.isbn = req.body.isbn || book.isbn;
         book.pages = req.body.pages || book.pages;
