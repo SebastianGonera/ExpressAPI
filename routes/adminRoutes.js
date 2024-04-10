@@ -17,7 +17,8 @@ adminRoute.get('/users', verifyToken, isAdmin, async (req, res) => {
         }
         res.status(200).json({ users: users });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -25,11 +26,12 @@ adminRoute.get('/books', verifyToken, isAdmin, async (req, res) => {
     try {
         const users = await Book.find({});
         if (!users) {
-            return  res.status(404).json({ message: "Database is empty" });
+            return res.status(404).json({ message: "Database is empty" });
         }
         res.status(200).json({ books: users });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -37,11 +39,12 @@ adminRoute.get('/authors', verifyToken, isAdmin, async (req, res) => {
     try {
         const users = await Author.find({});
         if (!users) {
-            return  res.status(404).json({ message: "Database is empty" });
+            return res.status(404).json({ message: "Database is empty" });
         }
         res.status(200).json({ authors: users });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -51,7 +54,7 @@ adminRoute.post('/add_user', verifyToken, isAdmin, async (req, res) => {
         if (email) {
             return res.status(404).json({ message: "User with this e-mail exists in database" });
         }
-        else{
+        else {
             const pass = bcrypt.hashSync(req.body.password, salt);
             const newUser = new User({
                 username: req.body.username,
@@ -59,19 +62,20 @@ adminRoute.post('/add_user', verifyToken, isAdmin, async (req, res) => {
                 password: pass
             });
             await newUser.save();
-    
+
             res.status(200).json({ message: "New user created successfully" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 adminRoute.post('/add_book', verifyToken, isAdmin, async (req, res) => {
     try {
-        const isbn = await Book.findOne({'isbn': req.body.isbn});
-        if(isbn){
-            return res.status(404).json({message : "Book with this isbn exists in database"});
+        const isbn = await Book.findOne({ 'isbn': req.body.isbn });
+        if (isbn) {
+            return res.status(404).json({ message: "Book with this isbn exists in database" });
         }
         const newBook = new Book({
             title: req.body.title,
@@ -88,17 +92,20 @@ adminRoute.post('/add_book', verifyToken, isAdmin, async (req, res) => {
 
         res.status(200).json({ message: "Book created successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 
 });
 
 adminRoute.post('/add_author', verifyToken, isAdmin, async (req, res) => {
     try {
-        const author = await Author.findOne({'fullName': req.body.fullName,
-         'email': req.body.email});
-        if(author){
-            return res.status(400).json({message: "Author with this data exists in database"});
+        const author = await Author.findOne({
+            'fullName': req.body.fullName,
+            'email': req.body.email
+        });
+        if (author) {
+            return res.status(400).json({ message: "Author with this data exists in database" });
         }
         const newAuthor = new Author({
             fullName: req.body.fullName,
@@ -107,11 +114,12 @@ adminRoute.post('/add_author', verifyToken, isAdmin, async (req, res) => {
             address: req.body.address,
             about: req.body.about
         });
-        
+
         await newAuthor.save();
         res.status(200).json({ message: "New author added successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -120,14 +128,15 @@ adminRoute.put('/add_admin/:id', verifyToken, isAdmin, async (req, res) => {
         const userId = req.params.id;
         const user = await User.findById(userId);
         if (!user) {
-            return  res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
         user.isAdmin = true;
         await user.save();
 
         res.status(200).json({ message: "Added new administrator" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -135,7 +144,7 @@ adminRoute.put('/remove_admin/:id', verifyToken, isAdmin, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-           return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
         if (!user.isAdmin) {
             return res.status(400).json({ message: "This user is not admin" });
@@ -145,7 +154,8 @@ adminRoute.put('/remove_admin/:id', verifyToken, isAdmin, async (req, res) => {
 
         res.status(200).json({ message: "User is deleted as admin" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -157,8 +167,8 @@ adminRoute.put('/update_book/:id', verifyToken, isAdmin, async (req, res) => {
             return res.status(400).json({ message: "Invalid id_ for this book" });
         }
         const book = await Book.findById(id);
-        if(!book){
-            return res.status(404).json({message: "Book not found"});
+        if (!book) {
+            return res.status(404).json({ message: "Book not found" });
         }
         book.title = req.body.title || book.title;
         book.isbn = req.body.isbn || book.isbn;
@@ -172,7 +182,8 @@ adminRoute.put('/update_book/:id', verifyToken, isAdmin, async (req, res) => {
         await book.save();
         return res.status(200).json({ book });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -185,8 +196,8 @@ adminRoute.put('/update_author/:id', verifyToken, isAdmin, async (req, res) => {
         }
 
         const author = await Author.findById(id);
-        if(!author){
-            return res.status(404).json({message: "Author not found"});
+        if (!author) {
+            return res.status(404).json({ message: "Author not found" });
         }
         author.fullName = req.body.fullName;
         author.age = req.body.age;
@@ -196,7 +207,8 @@ adminRoute.put('/update_author/:id', verifyToken, isAdmin, async (req, res) => {
         await author.save();
         return res.status(200).json({ author });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -204,7 +216,7 @@ adminRoute.put("/change_password/:id", verifyToken, isAdmin, async (req, res) =>
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return  res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
         const newPass = bcrypt.hashSync(req.body.password, salt);
 
@@ -214,7 +226,8 @@ adminRoute.put("/change_password/:id", verifyToken, isAdmin, async (req, res) =>
 
         res.status(200).json({ message: "Password successfully changed for user" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -236,7 +249,8 @@ adminRoute.put('/update_user/:userId', verifyToken, isAdmin, async (req, res) =>
         res.status(200).json({ message: "User successfully updated" });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -247,10 +261,11 @@ adminRoute.delete('/delete_book/:id', verifyToken, isAdmin, async (req, res) => 
         if (book) {
             return res.status(200).json({ message: 'Successfully deleted book' });
         } else {
-            return  res.status(404).json({ message: "Book not found" });
+            return res.status(404).json({ message: "Book not found" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 
 });
@@ -265,7 +280,8 @@ adminRoute.delete('/delete_author/:id', verifyToken, isAdmin, async (req, res) =
             return res.status(404).json({ message: "Author not found" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 
 });
@@ -274,17 +290,18 @@ adminRoute.delete('/delete_user/:userId', verifyToken, async (req, res) => {
     try {
         const id = req.params.userId;
         const userIsAdmin = await User.findById(id);
-        if(userIsAdmin.isAdmin){
-            return res.status(400).json({message:"This user is admin"});
+        if (userIsAdmin.isAdmin) {
+            return res.status(400).json({ message: "This user is admin" });
         }
         const user = await User.findByIdAndDelete(id);
         if (!user) {
-            return  res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         res.status(200).json({ message: "User successfully deleted" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 

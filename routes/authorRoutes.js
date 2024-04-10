@@ -10,7 +10,8 @@ authorRoute.get('/', async (req, res) => {
         const authors = await Author.find({});
         res.status(200).json({ authors: authors });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -24,17 +25,20 @@ authorRoute.get('/:id', async (req, res) => {
             return res.status(404).json({ message: "Author not found" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 authorRoute.post('/add', verifyToken, async (req, res) => {
     try {
-        const author = await Author.findOne({'fullName': req.body.fullName,
-        'email': req.body.email});
-       if(author){
-           return res.status(400).json({message: "Author with this data exists in database"});
-       }
+        const author = await Author.findOne({
+            'fullName': req.body.fullName,
+            'email': req.body.email
+        });
+        if (author) {
+            return res.status(400).json({ message: "Author with this data exists in database" });
+        }
         const newAuthor = new Author({
             fullName: req.body.fullName,
             age: req.body.age,
@@ -46,7 +50,8 @@ authorRoute.post('/add', verifyToken, async (req, res) => {
         await newAuthor.save();
         res.status(200).json({ message: "New author added successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -58,8 +63,8 @@ authorRoute.put('/update/:id', verifyToken, async (req, res) => {
             return res.status(400).json({ message: "Invalid id_ for this author" });
         }
         const author = await Author.findById(id);
-        if(!author){
-            return  res.status(404).json({ message: "Author not found" });
+        if (!author) {
+            return res.status(404).json({ message: "Author not found" });
         }
         author.fullName = req.body.fullName;
         author.age = req.body.age;
@@ -69,7 +74,8 @@ authorRoute.put('/update/:id', verifyToken, async (req, res) => {
         await author.save();
         return res.status(200).json({ author });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 export default authorRoute;

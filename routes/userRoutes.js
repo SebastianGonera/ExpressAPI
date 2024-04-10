@@ -27,7 +27,8 @@ userRoute.get('/favorite_books/:userId', verifyToken, async (req, res) => {
         res.status(200).json({ books: books });
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -50,7 +51,8 @@ userRoute.get('/favorite_authors/:userId', verifyToken, async (req, res) => {
         res.status(200).json({ authors: authors });
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -74,7 +76,8 @@ userRoute.post('/signup', async (req, res) => {
 
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -98,7 +101,8 @@ userRoute.post('/signin', async (req, res) => {
             }
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -123,7 +127,8 @@ userRoute.put('/add_favorite_book/:bookId', verifyToken, async (req, res) => {
 
         res.status(200).json({ message: "Book added to favorite successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -148,7 +153,8 @@ userRoute.put('/add_favorite_author/:authorId', verifyToken, async (req, res) =>
 
         res.status(200).json({ message: "Author added to favorite successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -170,7 +176,8 @@ userRoute.put('/update/:userId', verifyToken, async (req, res) => {
         res.status(200).json({ message: "User successfully updated", token: token });
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -178,24 +185,25 @@ userRoute.put("/change_password/:id", verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return  res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
-        if(req.body.password && req.body.confirmPass
-            && req.body.password == req.body.confirmPass){
-                const newPass = bcrypt.hashSync(req.body.password, salt);
+        if (req.body.password && req.body.confirmPass
+            && req.body.password == req.body.confirmPass) {
+            const newPass = bcrypt.hashSync(req.body.password, salt);
 
-                user.password = newPass;
-        
-                await user.save();
-        
-                return  res.status(200).json({ message: "Password successfully changed for user" });
-            }
-        else{
-            return res.status(400).json({message:"Password and second password are not the same"});
+            user.password = newPass;
+
+            await user.save();
+
+            return res.status(200).json({ message: "Password successfully changed for user" });
         }
-       
+        else {
+            return res.status(400).json({ message: "Password and second password are not the same" });
+        }
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -220,7 +228,8 @@ userRoute.delete('/remove_favorite_book/:bookId', verifyToken, async (req, res) 
 
         res.status(200).json({ message: "Book deleted from favorite successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 
 });
@@ -246,7 +255,8 @@ userRoute.delete('/remove_favorite_author/:authorId', verifyToken, async (req, r
 
         res.status(200).json({ message: "Author deleted from favorite successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -260,7 +270,8 @@ userRoute.delete('/delete/:userId', verifyToken, async (req, res) => {
 
         res.status(200).json({ message: "User successfully deleted" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 

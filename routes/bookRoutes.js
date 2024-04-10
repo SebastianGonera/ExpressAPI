@@ -10,7 +10,8 @@ bookRoute.get('/', async (req, res) => {
         const books = await Book.find({});
         res.status(200).json({ books: books });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -24,15 +25,16 @@ bookRoute.get('/:id', async (req, res) => {
             return res.status(404).json({ message: "Book not found" });
         }
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 bookRoute.post('/add', verifyToken, async (req, res) => {
     try {
-        const isbn = await Book.findOne({'isbn': req.body.isbn});
-        if(isbn){
-            return res.status(404).json({message : "Book with this isbn exists in database"});
+        const isbn = await Book.findOne({ 'isbn': req.body.isbn });
+        if (isbn) {
+            return res.status(404).json({ message: "Book with this isbn exists in database" });
         }
         const newBook = new Book({
             title: req.body.title,
@@ -49,7 +51,8 @@ bookRoute.post('/add', verifyToken, async (req, res) => {
 
         res.status(200).json({ message: "Book created successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 
 });
@@ -62,8 +65,8 @@ bookRoute.put('/update/:id', verifyToken, async (req, res) => {
             return res.status(400).json({ message: "Invalid id_ for this book" });
         }
         const book = await Book.findById(id);
-        if(!book){
-            return res.status(404).json({message: "Book not found"});
+        if (!book) {
+            return res.status(404).json({ message: "Book not found" });
         }
         book.title = req.body.title || book.title;
         book.isbn = req.body.isbn || book.isbn;
@@ -77,7 +80,8 @@ bookRoute.put('/update/:id', verifyToken, async (req, res) => {
         await book.save();
         return res.status(200).json({ book });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error.message);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 

@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "../auth.js";
 import multer from "multer";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 import * as dotenv from "dotenv";
 
@@ -33,12 +33,14 @@ uploadRouter.post(
             };
             const resultUpload = await uploadStream(req);
 
-            res.json({ secure_url: resultUpload.secure_url,
+            res.json({
+                secure_url: resultUpload.secure_url,
                 url: resultUpload.url,
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            console.error(error.message);
+            res.status(500).json({ message: "Internal Server Error" });
         }
-});
+    });
 
 export default uploadRouter;
